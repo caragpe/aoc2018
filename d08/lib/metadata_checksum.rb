@@ -1,28 +1,32 @@
 class MetadataChecksum
 
-  def checksum_of_string(input)
-    data_array = input.split(' ').map(&:to_i)
-    sum(data_array)
-  end
-
   def has_children?(data_array)
     return true if data_array[0] > 0
     false
   end
 
+  def process_nodes(data)
+    accumulated_checksum = 0
+    while(data.length > 0)
+      accumulated_checksum += process_children_nodes(data)
+    end
+    accumulated_checksum
+  end
+
   def process_children_nodes(data)
+    result = 0
     if has_children?(data)
       children_nodes = data[0]
       qty_metadata = data[1]
-      result = sum_of_metadata_values(data[data.size - qty_metadata, data.size])
       trash_head = data.shift(2)
-      trash_tail = data.pop(qty_metadata)
       (1..children_nodes).each do |x|
         result += process_children_nodes(data)
       end
+      result += sum_of_metadata_values(data.slice(0,qty_metadata))
+      trash_tail = data.shift(qty_metadata)
     else
       metadata_qty = data[1]
-      metadata_value = sum_of_metadata_values(data[2,metadata_qty])
+      metadata_value = sum_of_metadata_values(data.slice(2,metadata_qty))
       removed = data.shift(2 + metadata_qty)
       return metadata_value
     end
@@ -39,3 +43,9 @@ class MetadataChecksum
     input.split(' ').map(&:to_i)
   end
 end
+
+data = File.read('./data.txt')
+
+@metadata_checksum = MetadataChecksum.new()
+
+puts "Checksum result: #{@metadata_checksum.process_nodes(data.split(' ').map(&:to_i))}"

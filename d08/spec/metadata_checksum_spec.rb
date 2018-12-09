@@ -23,14 +23,22 @@ describe MetadataChecksum do
     end
   end
   describe ".process_children_nodes" do
-    it "return metadata checksum of an empty node" do
+    it "returns metadata checksum of an empty node" do
       expect((@check.process_children_nodes([0, 2, 10, 12]))).to eq(22)
     end
-    it "return metadata checksum of empty node whose parent has one child node" do
-      expect((@check.process_children_nodes([1,1,0, 2, 10, 12,1]))).to eq(23)
+    it "returns metadata checksum of empty node whose parent has one child node" do
+      expect((@check.process_children_nodes([1, 1, 0, 2, 10, 12, 1]))).to eq(23)
     end
-    it "return metadata checksum of empty nodes whose parent has two children nodes" do
-      expect((@check.process_children_nodes([2,1,0, 2, 10, 12, 0, 1, 20,1]))).to eq(43)
+    it "returns metadata checksum of empty nodes whose parent has two children nodes" do
+      expect((@check.process_children_nodes([2, 1, 0, 2, 10, 12, 0, 1, 20, 1]))).to eq(43)
+    end
+  end
+  describe ".process_nodes" do
+    it "returns metadata checksum of two parent nodes, one has two children nodes" do
+      expect((@check.process_nodes([0, 1, 3, 2, 1, 0, 2, 10, 12, 0, 1, 20, 1]))).to eq(46)
+    end
+    it "returns metadata checksum of three parent nodes, one has two children nodes, one has one children node" do
+      expect((@check.process_nodes([2, 1, 0, 1, 4, 0, 2, 10, 11, 4,0, 3, 5, 6, 7, 2, 3, 0, 2, 10, 11, 0, 3, 4, 4, 4, 6, 7, 8]))).to eq(101)
     end
   end
 end
